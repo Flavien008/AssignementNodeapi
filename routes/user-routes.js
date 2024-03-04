@@ -1,5 +1,26 @@
 let User = require('../model/user');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken'); // You may need to install 'jsonwebtoken' package
+
+async function login(req, res, next) {
+    try {
+        const { username, password } = req.body;
+        const user = await User.findOne({ username });
+        if (!user) {
+            return res.status(401).json({ error: 'Invalid username or password' });
+        }
+        const passwordMatch = await bcrypt.compare(password, user.password);
+        if (!passwordMatch) {
+            return res.status(401).json({ error: 'Invalid username or password' });
+        }
+        const token = jwt.sign({ userId: user._id, username: user.username }, 'RANDOM_TOKEN_SECRET', { expiresIn: '24h' });
+        res.status(200).json({ message: 'Login successful', token,  user  });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+
 
 // Récupérer tous les assignments (GET)
 /*
@@ -93,4 +114,4 @@ function deleteAssignment(req, res) {
 
 
 
-module.exports = { signup };
+module.exports = { signup , login };

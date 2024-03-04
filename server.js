@@ -47,7 +47,10 @@ let port = process.env.PORT || 8010;
 const prefix = '/api';
 
 app.route(prefix + '/signup')
-  .post(userroutes.signup)
+  .post(userroutes.signup);
+
+  app.route(prefix + '/login')
+  .post(userroutes.login)
 
 // http://serveur..../assignments
 app.route(prefix + '/assignments')
