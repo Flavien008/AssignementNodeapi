@@ -2,7 +2,7 @@ let User = require('../model/user');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken'); // You may need to install 'jsonwebtoken' package
 
-async function login(req, res, next) {
+async function login(req, res) {
     try {
         const { username, password } = req.body;
         const user = await User.findOne({ username });
@@ -53,7 +53,7 @@ function getUser(req, res){
     */
 }
 
-async function signup(req, res, next) {
+async function signup(req, res) {
     try {
         const hash = await bcrypt.hash(req.body.password, 10); // Use a higher salt rounds value, e.g., 10
         req.body.password = hash;
