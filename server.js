@@ -3,6 +3,7 @@ let app = express();
 let bodyParser = require('body-parser');
 let assignmentroutes = require('./routes/assignments-routes');
 let userroutes = require('./routes/user-routes');
+let matiereroutes = require('./routes/matiere-routes');
 
 let mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
@@ -61,6 +62,11 @@ app.route(prefix + '/assignments')
 app.route(prefix + '/assignments/:id')
   .get(assignmentroutes.getAssignment)
   .delete(assignmentroutes.deleteAssignment);
+
+  app.route(prefix + '/matiere')
+  .get(matiereroutes.getMatieres)
+  .post(matiereroutes.saveMatiere);
+
 
 
 // On démarre le serveur
