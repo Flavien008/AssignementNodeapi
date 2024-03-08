@@ -4,6 +4,7 @@ let bodyParser = require('body-parser');
 let assignmentroutes = require('./routes/assignments-routes');
 let userroutes = require('./routes/user-routes');
 let matiereroutes = require('./routes/matiere-routes');
+let grouperoutes = require('./routes/groupe-routes');
 
 let mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
@@ -66,6 +67,16 @@ app.route(prefix + '/assignments/:id')
   app.route(prefix + '/matiere')
   .get(matiereroutes.getMatieres)
   .post(matiereroutes.saveMatiere);
+
+  //pour groupes
+  app.route(prefix + '/groupes')
+    .get(grouperoutes.getGroups)
+    .post(grouperoutes.postGroup)
+    .put(grouperoutes.updateGroup)
+
+  app.route(prefix + '/groupes/:id')
+    .get(grouperoutes.getGroup)
+    .delete(grouperoutes.deleteGroup)
 
 
 

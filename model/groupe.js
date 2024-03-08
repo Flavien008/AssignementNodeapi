@@ -5,7 +5,7 @@ const UserSchema = require('../model/user');
 
 const GroupSchema = new Schema({
     nom: String,
-    utilisateurs: [UserSchema]
+    utilisateurs: [{ type: Schema.Types.ObjectId, ref: 'User' }]
 });
 
 module.exports = mongoose.model('Group', GroupSchema);
