@@ -1,5 +1,5 @@
 let Assignment = require('../model/assignment');
-
+let mongoose = require('mongoose');
 // Récupérer tous les assignments (GET)
 /*
 function getAssignments(req, res){
@@ -49,23 +49,27 @@ function getAssignment(req, res){
 }
 
 // Ajout d'un assignment (POST)
-function postAssignment(req, res){
+function postAssignment(req, res) {
     let assignment = new Assignment();
-    assignment.id = req.body.id;
-    assignment.nom = req.body.nom;
-    assignment.dateDeRendu = req.body.dateDeRendu;
-    assignment.rendu = req.body.rendu;
+    assignment._id = new mongoose.Types.ObjectId();
+    assignment.titre = req.body.titre;
+    assignment.description = req.body.description;
+    assignment.matiere = req.body.matiere;
+    assignment.dateLimite = req.body.dateLimite;
+    assignment.lien = req.body.lien;
+    assignment.groupe = req.body.groupe;
 
     console.log("POST assignment reçu :");
-    console.log(assignment)
+    console.log("assignement", assignment);
 
-    assignment.save( (err) => {
-        if(err){
-            res.send('cant post assignment ', err);
+    assignment.save((err) => {
+        if (err) {
+            return res.status(500).send('Impossible de poster l\'assignment : ' + err);
         }
-        res.json({ message: `${assignment.nom} saved!`})
-    })
+        return res.status(200).json({ message: `${assignment.titre} enregistré !` });
+    });
 }
+
 
 // Update d'un assignment (PUT)
 function updateAssignment(req, res) {
