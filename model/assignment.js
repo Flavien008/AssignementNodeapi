@@ -8,8 +8,7 @@ let AssignmentSchema = Schema({
     matiere: String,
     dateLimite: String,
     groupe: [{
-        idGroupe: String,
-        nom: String
+        idGroupe: String
     }],
     lien: String,
     rendu: [{
