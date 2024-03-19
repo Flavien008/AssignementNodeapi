@@ -3,13 +3,10 @@ let Schema = mongoose.Schema;
 const mongoosePaginate = require('mongoose-aggregate-paginate-v2');
 
 let AssignmentSchema = Schema({
-    _id: String,
-    titre : String,
-    description : String,
-    matiere : String,
-    groupe : [],
-    dateLimite: Date,
-    lien: String
+    id: Number,
+    dateDeRendu: Date,
+    nom: String,
+    rendu: Boolean
 });
 
 AssignmentSchema.plugin(mongoosePaginate);
