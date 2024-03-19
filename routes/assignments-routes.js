@@ -1,101 +1,115 @@
 let Assignment = require('../model/assignment');
 
 // Récupérer tous les assignments (GET)
-/*
-function getAssignments(req, res){
-    Assignment.find((err, assignments) => {
-        if(err){
-            res.send(err)
-        }
-
-        res.send(assignments);
-    });
-}
-*/
-
-function getAssignments(req, res){
-    let aggregateQuery = Assignment.aggregate();
-
-    Assignment.aggregatePaginate(
-        aggregateQuery, 
-        {
-            page: parseInt(req.query.page) || 1,
-            limit: parseInt(req.query.limit) || 10
-        },
-        (err, data) => {
-            if(err){
-                res.send(err)
-            }
-    
-            res.send(data);
-        }
-    );
+async function getAssignments(req, res) {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const assignments = await Assignment.paginate({}, { page, limit });
+        res.json(assignments);
+    } catch (error) {
+        res.status(500).send(error);
+    }
 }
 
 // Récupérer un assignment par son id (GET)
-function getAssignment(req, res){
-    let assignmentId = req.params.id;
-    Assignment.findById(assignmentId, (err, assignment) =>{
-        if(err){res.send(err)}
+async function getAssignment(req, res) {
+    try {
+        const assignmentId = req.params.id;
+        const assignment = await Assignment.findById(assignmentId);
+        if (!assignment) {
+            return res.status(404).json({ message: "Assignment not found" });
+        }
         res.json(assignment);
-    })
-
-    /*
-    Assignment.findOne({id: assignmentId}, (err, assignment) =>{
-        if(err){res.send(err)}
-        res.json(assignment);
-    })
-    */
+    } catch (error) {
+        res.status(500).send(error);
+    }
 }
 
 // Ajout d'un assignment (POST)
-function postAssignment(req, res){
-    let assignment = new Assignment();
-    assignment.id = req.body.id;
-    assignment.nom = req.body.nom;
-    assignment.dateDeRendu = req.body.dateDeRendu;
-    assignment.rendu = req.body.rendu;
-
-    console.log("POST assignment reçu :");
-    console.log(assignment)
-
-    assignment.save( (err) => {
-        if(err){
-            res.send('cant post assignment ', err);
-        }
-        res.json({ message: `${assignment.nom} saved!`})
-    })
+async function postAssignment(req, res) {
+    try {
+        const assignmentData = req.body;
+        const assignment = new Assignment(assignmentData);
+        await assignment.save();
+        res.status(201).json({ message: `${assignment.titre} saved!` });
+    } catch (error) {
+        res.status(500).send(error);
+    }
 }
 
 // Update d'un assignment (PUT)
-function updateAssignment(req, res) {
-    console.log("UPDATE recu assignment : ");
-    console.log(req.body);
-    Assignment.findByIdAndUpdate(req.body._id, req.body, {new: true}, (err, assignment) => {
-        if (err) {
-            console.log(err);
-            res.send(err)
-        } else {
-          res.json({message: 'updated'})
+async function updateAssignment(req, res) {
+    try {
+        const assignmentId = req.params.id;
+        const updatedAssignment = req.body;
+        const assignment = await Assignment.findByIdAndUpdate(assignmentId, updatedAssignment, { new: true });
+        if (!assignment) {
+            return res.status(404).json({ message: "Assignment not found" });
         }
+        res.json({ message: 'updated' });
+    } catch (error) {
+        res.status(500).send(error);
+    }
+}
 
-      // console.log('updated ', assignment)
-    });
+// Ajout d'un ou plusieurs rendus à un assignment (POST)
+async function addRendus(req, res) {
+    try {
+        const assignmentId = req.params.id;
+        const rendus = req.body.rendu;
+        const assignment = await Assignment.findById(assignmentId);
+        if (!assignment) {
+            return res.status(404).json({ message: "Assignment not found" });
+        }
+        assignment.rendu.push(...rendus);
+        await assignment.save();
+        res.json({ message: 'Rendus added successfully' });
+    } catch (error) {
+        res.status(500).send(error);
+    }
+}
 
+// Ajout d'un ou plusieurs groupes à un assignment (POST)
+async function addGroupes(req, res) {
+    try {
+        const assignmentId = req.params.id;
+        const groupes = req.body.groupe;
+        const assignment = await Assignment.findById(assignmentId);
+        if (!assignment) {
+            return res.status(404).json({ message: "Assignment not found" });
+        }
+        assignment.groupe.push(...groupes);
+        await assignment.save();
+        res.json({ message: 'Groupes added successfully' });
+    } catch (error) {
+        res.status(500).send(error);
+    }
 }
 
 // suppression d'un assignment (DELETE)
-// l'id est bien le _id de mongoDB
-function deleteAssignment(req, res) {
-
-    Assignment.findByIdAndRemove(req.params.id, (err, assignment) => {
-        if (err) {
-            res.send(err);
+async function deleteAssignment(req, res) {
+    try {
+        const assignmentId = req.params.id;
+        const deletedAssignment = await Assignment.findByIdAndRemove(assignmentId);
+        if (!deletedAssignment) {
+            return res.status(404).json({ message: "Assignment not found" });
         }
-        res.json({message: `${assignment.nom} deleted`});
-    })
+        res.json({ message: `${deletedAssignment.titre} deleted` });
+    } catch (error) {
+        res.status(500).send(error);
+    }
 }
 
+// Obtenir les assignments par l'ID d'un groupe (GET)
+async function getAssignmentsByGroupId(req, res) {
+    try {
+        const groupId = req.params.id;
+        const assignments = await Assignment.find({ 'groupe.idGroupe': groupId });
+        res.json(assignments);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+}
 
-
-module.exports = { getAssignments, postAssignment, getAssignment, updateAssignment, deleteAssignment };
+module.exports = { getAssignments, postAssignment, getAssignment, updateAssignment, addRendus, addGroupes, deleteAssignment,getAssignmentsByGroupId };
