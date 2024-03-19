@@ -64,7 +64,10 @@ app.route(prefix + '/assignments/:id')
   .get(assignmentroutes.getAssignment)
   .delete(assignmentroutes.deleteAssignment);
 
-  app.route(prefix + '/matiere')
+  app.route(prefix + '/assignments/group/:id')
+  .get(assignmentroutes.getAssignmentsByGroupId);
+
+app.route(prefix + '/matiere')
   .get(matiereroutes.getMatieres)
   .post(matiereroutes.saveMatiere);
 
