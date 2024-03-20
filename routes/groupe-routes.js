@@ -1,5 +1,18 @@
 const Group = require('../model/groupe');
 
+async function getGroupes(req, res) {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const grp = await Group.aggregatePaginate({}, { page, limit });
+        console.log('groupe', grp);
+        res.json(grp);
+    } catch (error) {
+        console.log('Erreur lors de la récupération des groupes:', error);
+        res.status(500).send(error);
+    }
+}
+
 // Récupérer tous les groupes (GET)
 function getGroups(req, res){
     Group.find((err, groups) => {
@@ -83,4 +96,4 @@ function addUserToGroup(req, res){
     });
 }
 
-module.exports = { getGroups, getGroup, postGroup, updateGroup, deleteGroup,addUserToGroup};
+module.exports = { getGroups, getGroup, postGroup, updateGroup, deleteGroup,addUserToGroup,getGroupes};
