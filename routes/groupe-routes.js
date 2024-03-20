@@ -3,9 +3,23 @@ let mongoose = require('mongoose');
 
 async function getGroupes(req, res) {
     try {
+        let nom = req.query.nom; 
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
-        const grp = await Group.aggregatePaginate({}, { page, limit });
+        const options = {
+            page: page,
+            limit: limit
+        };
+
+        const regex = new RegExp(nom, 'i');
+        const matchStage = {
+            $match: {
+                nom: { $regex: regex } 
+            }
+        };
+
+        const aggregation = Group.aggregate([matchStage ]);
+        const grp = await Group.aggregatePaginate(aggregation, options);
         console.log('groupe', grp);
         res.json(grp);
     } catch (error) {
@@ -45,10 +59,6 @@ async function getGroupesByStudent(req, res) {
         res.status(500).send(error);
     }
 }
-
-
-
-
 
 // Récupérer tous les groupes (GET)
 function getGroups(req, res){
