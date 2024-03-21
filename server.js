@@ -73,9 +73,13 @@ app.route(prefix + '/matiere')
 
   //pour groupes
   app.route(prefix + '/groupes')
-    .get(grouperoutes.getGroups)
+    .get(grouperoutes.getGroupes)
     .post(grouperoutes.postGroup)
     .put(grouperoutes.updateGroup)
+    
+    app.route(prefix + '/groupes/etudiant/:id')
+    .get(grouperoutes.getGroupesByStudent);
+
 
   app.route(prefix + '/groupes/:id')
     .get(grouperoutes.getGroup)
