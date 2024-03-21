@@ -12,21 +12,29 @@ let Assignment = require('../model/assignment');
 
 async function getAssignments(req, res) {
     try {
+        let titre = req.query.titre; 
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const options = {
             page: page,
             limit: limit
         };
-        const ass = await Assignment.aggregatePaginate(options);
-        console.log('Assignment', ass);
-        res.json(ass);
+
+        const regex = new RegExp(titre, 'i');
+        const matchStage = {
+            $match: {
+                titre: { $regex: regex } 
+            }
+        };
+
+        const aggregation = Assignment.aggregate([matchStage ]);
+        const grp = await Assignment.aggregatePaginate(aggregation, options);
+        res.json(grp);
     } catch (error) {
-        console.log('Erreur lors de la récupération des assignments:', error);
+        console.log('Erreur lors de la récupération des groupes:', error);
         res.status(500).send(error);
     }
 }
-
 // Récupérer un assignment par son id (GET)
 async function getAssignment(req, res) {
     try {
