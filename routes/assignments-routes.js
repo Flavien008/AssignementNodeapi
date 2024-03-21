@@ -1,13 +1,28 @@
 let Assignment = require('../model/assignment');
 
 // Récupérer tous les assignments (GET)
+// function getAssignments(req, res){
+//     Assignment.find((err, assignment) => {
+//         if(err){
+//             res.send(err)
+//         }
+//         res.send(assignment);
+//     });
+// }
+
 async function getAssignments(req, res) {
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
-        const assignments = await Assignment.paginate({}, { page, limit });
-        res.json(assignments);
+        const options = {
+            page: page,
+            limit: limit
+        };
+        const ass = await Assignment.aggregatePaginate(options);
+        console.log('Assignment', ass);
+        res.json(ass);
     } catch (error) {
+        console.log('Erreur lors de la récupération des assignments:', error);
         res.status(500).send(error);
     }
 }
