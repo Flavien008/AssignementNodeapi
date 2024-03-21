@@ -77,7 +77,7 @@ async function addRendus(req, res) {
         if (!assignment) {
             return res.status(404).json({ message: "Assignment not found" });
         }
-        assignment.rendu.push(...rendus);
+        assignment.rendu.push(rendus);
         await assignment.save();
         res.json({ message: 'Rendus added successfully' });
     } catch (error) {
@@ -94,7 +94,7 @@ async function addGroupes(req, res) {
         if (!assignment) {
             return res.status(404).json({ message: "Assignment not found" });
         }
-        assignment.groupe.push(...groupes);
+        assignment.groupe.push(groupes);
         await assignment.save();
         res.json({ message: 'Groupes added successfully' });
     } catch (error) {

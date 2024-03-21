@@ -67,6 +67,10 @@ app.route(prefix + '/assignments/:id')
   app.route(prefix + '/assignments/group/:id')
   .get(assignmentroutes.getAssignmentsByGroupId);
 
+  app.route(prefix + '/rendu/:id')
+  .post(assignmentroutes.addRendus);
+
+
 app.route(prefix + '/matiere')
   .get(matiereroutes.getMatieres)
   .post(matiereroutes.saveMatiere);
