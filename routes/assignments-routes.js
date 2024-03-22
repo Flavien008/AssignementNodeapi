@@ -13,6 +13,7 @@ let Assignment = require('../model/assignment');
 async function getAssignments(req, res) {
     try {
         let titre = req.query.titre; 
+        let matiere = req.query.matiere; 
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const options = {
@@ -20,12 +21,22 @@ async function getAssignments(req, res) {
             limit: limit
         };
 
-        const regex = new RegExp(titre, 'i');
+        const regexTitre = new RegExp(titre, 'i');
+        const regexMatiere = new RegExp(matiere, 'i');
+        
         const matchStage = {
             $match: {
-                titre: { $regex: regex } 
+                $or: [
+                    { titre: { $regex: regexTitre } },
+                    { description: { $regex: regexTitre } }
+                ],
+                $and: [
+                    { matiere: { $regex: regexMatiere } }
+                ]
             }
+            
         };
+        
 
         const aggregation = Assignment.aggregate([matchStage ]);
         const grp = await Assignment.aggregatePaginate(aggregation, options);
