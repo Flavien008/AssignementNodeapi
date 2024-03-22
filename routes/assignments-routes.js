@@ -125,6 +125,35 @@ async function addRendus(req, res) {
     }
 }
 
+// Mettre à jour la note et la remarque pour un rendu (PUT)
+async function updateRendu(req, res) {
+    try {
+        const assignmentId = req.params.assignmentId;
+        const renduId = req.params.renduId;
+        const { note, remarque } = req.body;
+        
+        const assignment = await Assignment.findById(assignmentId);
+        if (!assignment) {
+            return res.status(404).json({ message: "Assignment not found" });
+        }
+
+        const renduToUpdate = assignment.rendu.id(renduId);
+        if (!renduToUpdate) {
+            return res.status(404).json({ message: "Rendu not found" });
+        }
+
+        renduToUpdate.note = note;
+        renduToUpdate.remarque = remarque;
+
+        await assignment.save();
+
+        res.json({ message: 'Rendu updated successfully' });
+    } catch (error) {
+        res.status(500).send(error);
+    }
+}
+
+
 // Ajout d'un ou plusieurs groupes à un assignment (POST)
 async function addGroupes(req, res) {
     try {
@@ -167,4 +196,4 @@ async function getAssignmentsByGroupId(req, res) {
     }
 }
 
-module.exports = { getAssignments, postAssignment, getAssignment, updateAssignment, addRendus, addGroupes, deleteAssignment,getAssignmentsByGroupId };
+module.exports = { getAssignments, postAssignment, getAssignment, updateAssignment, addRendus, addGroupes, deleteAssignment,getAssignmentsByGroupId,updateRendu };
