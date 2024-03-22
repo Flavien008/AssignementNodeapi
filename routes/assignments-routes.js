@@ -1,4 +1,5 @@
 let Assignment = require('../model/assignment');
+let mongoose = require('mongoose');
 
 // Récupérer tous les assignments (GET)
 // function getAssignments(req, res){
@@ -14,6 +15,7 @@ async function getAssignments(req, res) {
     try {
         let titre = req.query.titre; 
         let matiere = req.query.matiere; 
+        let groupe = req.query.groupe; 
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const options = {
@@ -27,20 +29,22 @@ async function getAssignments(req, res) {
             $match: {},
           };
           
-          if (titre && regexTitre !== '') {
-            matchStage.$match = {
-              $or: [
-                { titre: { $regex: regexTitre } },
-                { description: { $regex: regexTitre } },
-              ],
-            };
-          }
-          
-          if (matiere && regexMatiere !== '') {
-            matchStage.$match.$and = [{ matiere: { $regex: regexMatiere } }];
-          }
-          
+        if (titre && regexTitre !== '') {
+        matchStage.$match = {
+            $or: [
+            { titre: { $regex: regexTitre } },
+            { description: { $regex: regexTitre } },
+            ],
+        };
+        }
         
+        if (matiere && regexMatiere !== '') {
+        matchStage.$match.$and = [{ matiere: { $regex: regexMatiere } }];
+        }
+        
+        if (groupe && groupe !== '') {
+            matchStage.$match = {"groupe.idGroupe": groupe}
+        }
 
         const aggregation = Assignment.aggregate([matchStage ]);
         const grp = await Assignment.aggregatePaginate(aggregation, options);
