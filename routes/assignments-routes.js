@@ -29,22 +29,35 @@ async function getAssignments(req, res) {
             $match: {},
           };
           
-        if (titre && regexTitre !== '') {
-        matchStage.$match = {
-            $or: [
-            { titre: { $regex: regexTitre } },
-            { description: { $regex: regexTitre } },
-            ],
-        };
+          if (titre && regexTitre !== '') {
+            matchStage.$match = {
+                $or: [
+                    { titre: { $regex: regexTitre } },
+                    { description: { $regex: regexTitre } },
+                ],
+            };
         }
         
         if (matiere && regexMatiere !== '') {
-        matchStage.$match.$and = [{ matiere: { $regex: regexMatiere } }];
+            if (!matchStage.$match) {
+                matchStage.$match = {};
+            }
+            if (!matchStage.$match.$and) {
+                matchStage.$match.$and = [];
+            }
+            matchStage.$match.$and.push({ matiere: { $regex: regexMatiere } });
         }
         
         if (groupe && groupe !== '') {
-            matchStage.$match = {"groupe.idGroupe": groupe}
+            if (!matchStage.$match) {
+                matchStage.$match = {};
+            }
+            if (!matchStage.$match.$and) {
+                matchStage.$match.$and = [];
+            }
+            matchStage.$match.$and.push({ "groupe.idGroupe": groupe });
         }
+        
 
         const aggregation = Assignment.aggregate([matchStage ]);
         const grp = await Assignment.aggregatePaginate(aggregation, options);
