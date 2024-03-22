@@ -23,19 +23,23 @@ async function getAssignments(req, res) {
 
         const regexTitre = new RegExp(titre, 'i');
         const regexMatiere = new RegExp(matiere, 'i');
-        
         const matchStage = {
-            $match: {
-                $or: [
-                    { titre: { $regex: regexTitre } },
-                    { description: { $regex: regexTitre } }
-                ],
-                $and: [
-                    { matiere: { $regex: regexMatiere } }
-                ]
-            }
-            
-        };
+            $match: {},
+          };
+          
+          if (titre && regexTitre !== '') {
+            matchStage.$match = {
+              $or: [
+                { titre: { $regex: regexTitre } },
+                { description: { $regex: regexTitre } },
+              ],
+            };
+          }
+          
+          if (matiere && regexMatiere !== '') {
+            matchStage.$match.$and = [{ matiere: { $regex: regexMatiere } }];
+          }
+          
         
 
         const aggregation = Assignment.aggregate([matchStage ]);
