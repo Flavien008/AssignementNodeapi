@@ -60,8 +60,9 @@ async function getAssignments(req, res) {
         
 
         const aggregation = Assignment.aggregate([matchStage ]);
-        const grp = await Assignment.aggregatePaginate(aggregation, options);
-        res.json(grp);
+        const liste = await Assignment.aggregatePaginate(aggregation, options);
+        console.log(liste);
+        res.json(liste);
     } catch (error) {
         console.log('Erreur lors de la récupération des groupes:', error);
         res.status(500).send(error);
@@ -96,11 +97,11 @@ async function postAssignment(req, res) {
 // Update d'un assignment (PUT)
 async function updateAssignment(req, res) {
     try {
-        const assignmentId = req.params.id;
+        const assignmentId = req.body._id;
         const updatedAssignment = req.body;
         const assignment = await Assignment.findByIdAndUpdate(assignmentId, updatedAssignment, { new: true });
         if (!assignment) {
-            return res.status(404).json({ message: "Assignment not found" });
+            return res.status(404).json({ message: "Assignment not found on update" });
         }
         res.json({ message: 'updated' });
     } catch (error) {
