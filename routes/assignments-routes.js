@@ -131,10 +131,8 @@ async function updateRendu(req, res) {
     try {
         const assignmentId = req.params.assignmentId;
         const renduId = req.params.renduId;
-        const { note, remarque } = req.body;
-        
+        const { note, remarque } = req.body;       
         const assignment = await Assignment.findById(assignmentId);
-        console.log(assignment);
         if (!assignment) {
             return res.status(404).json({ message: "Assignment not found" });
         }
