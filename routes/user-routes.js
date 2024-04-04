@@ -1,6 +1,6 @@
 let User = require('../model/user');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken'); // You may need to install 'jsonwebtoken' package
+const jwt = require('jsonwebtoken');
 
 async function login(req, res) {
     try {
@@ -62,7 +62,6 @@ async function signup(req, res) {
         user.password = req.body.password;
         user.name = req.body.name;
         user.role = req.body.role;
-        user.photo = req.body.photo;
 
         if (req.body.role == null) req.body.role = 'student';
   
@@ -102,7 +101,7 @@ function updateAssignment(req, res) {
 
 // suppression d'un User (DELETE)
 // l'id est bien le _id de mongoDB
-function deleteAssignment(req, res) {
+function deleteUser(req, res) {
 
     User.findByIdAndRemove(req.params.id, (err, User) => {
         if (err) {
