@@ -7,6 +7,7 @@ let UserSchema = Schema({
     password: String,
     name: String,
     role: String,
+    matricule: String
 });
 
 UserSchema.plugin(mongoosePaginate);

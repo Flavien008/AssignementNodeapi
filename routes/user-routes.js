@@ -62,6 +62,7 @@ async function signup(req, res) {
         user.password = req.body.password;
         user.name = req.body.name;
         user.role = req.body.role;
+        user.matricule = req.body.matricule;
 
         if (req.body.role == null) req.body.role = 'student';
   
@@ -72,7 +73,7 @@ async function signup(req, res) {
             if(err){
                 res.send('cant post user ', err);
             }
-            console.log({ message: `${user.nom} saved!`})
+            console.log({ message: `${user.name} saved!`})
             res.status(200).json(user);
         })
     } catch (error) {
