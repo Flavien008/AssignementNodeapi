@@ -82,6 +82,34 @@ async function getAssignment(req, res) {
     }
 }
 
+async function getPercentageAssignmentsBySubject(req, res) {
+    try {
+        // Utilisation de l'agrégation MongoDB pour compter le nombre d'Assignments par matière
+        const assignmentsBySubject = await Assignment.aggregate([
+            {
+                $group: {
+                    _id: '$matiere',
+                    count: { $sum: 1 }
+                }
+            }
+        ]);
+
+        // Calcul du total des Assignments
+        const totalAssignments = assignmentsBySubject.reduce((total, subject) => total + subject.count, 0);
+
+        // Calcul du pourcentage d'Assignments par matière
+        const percentageAssignmentsBySubject = assignmentsBySubject.map(subject => ({
+            matiere: subject._id,
+            pourcentage: (subject.count / totalAssignments) * 100
+        }));
+
+        res.json(percentageAssignmentsBySubject);
+    } catch (error) {
+        console.error("Erreur lors de la récupération du pourcentage d'Assignments par matière", error);
+        res.status(500).json({ error: "Une erreur est survenue lors du traitement de la requête" });
+    }
+}
+
 // Ajout d'un assignment (POST)
 async function postAssignment(req, res) {
     try {
@@ -196,4 +224,4 @@ async function getAssignmentsByGroupId(req, res) {
     }
 }
 
-module.exports = { getAssignments, postAssignment, getAssignment, updateAssignment, addRendus, addGroupes, deleteAssignment,getAssignmentsByGroupId,updateRendu };
+module.exports = { getPercentageAssignmentsBySubject,getAssignments, postAssignment, getAssignment, updateAssignment, addRendus, addGroupes, deleteAssignment,getAssignmentsByGroupId,updateRendu };

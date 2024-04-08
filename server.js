@@ -60,6 +60,9 @@ app.route(prefix + '/assignments')
   .put(assignmentroutes.updateAssignment)
   .get(assignmentroutes.getAssignments);
 
+  app.route(prefix + '/statistique/matiere')
+  .get(assignmentroutes.getPercentageAssignmentsBySubject);
+
 app.route(prefix + '/assignments/:id')
   .get(assignmentroutes.getAssignment)
   .delete(assignmentroutes.deleteAssignment);
