@@ -63,6 +63,9 @@ app.route(prefix + '/assignments')
   app.route(prefix + '/matiere/statistique')
   .get(assignmentroutes.getPercentageAssignmentsBySubject);
 
+  app.route(prefix + '/assignments/statistique')
+  .get(assignmentroutes.getAssignmentCountBetweenDates);
+
 app.route(prefix + '/assignments/:id')
   .get(assignmentroutes.getAssignment)
   .delete(assignmentroutes.deleteAssignment);

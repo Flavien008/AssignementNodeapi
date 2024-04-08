@@ -1,6 +1,6 @@
 let Assignment = require('../model/assignment');
 let mongoose = require('mongoose');
-
+const moment = require('moment');
 // Récupérer tous les assignments (GET)
 // function getAssignments(req, res){
 //     Assignment.find((err, assignment) => {
@@ -157,6 +157,47 @@ async function addRendus(req, res) {
     }
 }
 
+
+async function getAssignmentCountBetweenDates(req, res) {
+    try {
+        const startDate = moment.utc(req.query.date1, 'DD/MM/YYYY').startOf('day').toDate();
+        const endDate = moment.utc(req.query.date2, 'DD/MM/YYYY').endOf('day').toDate();
+
+        console.log("startdate: ", startDate);
+        console.log("endDate: ", endDate);
+
+        const assignmentCounts = await Assignment.aggregate([
+            {
+                $match: {
+                    dateCreation: {
+                        $gte: startDate,
+                        $lte: endDate,
+                        $exists: true // Vérifier l'existence du champ dateCreation
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        $dateToString: {
+                            format: "%d-%m-%Y",
+                            date: "$dateCreation"
+                        }
+                    },
+                    count: { $sum: 1 }
+                }
+            }
+        ]);
+
+        res.json(assignmentCounts);
+    } catch (error) {
+        console.error("Error fetching assignment count:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+}
+
+  
+
 // Mettre à jour la note et la remarque pour un rendu (PUT)
 async function updateRendu(req, res) {
     try {
@@ -227,4 +268,4 @@ async function getAssignmentsByGroupId(req, res) {
     }
 }
 
-module.exports = { getPercentageAssignmentsBySubject,getAssignments, postAssignment, getAssignment, updateAssignment, addRendus, addGroupes, deleteAssignment,getAssignmentsByGroupId,updateRendu };
+module.exports = { getAssignmentCountBetweenDates,getPercentageAssignmentsBySubject,getAssignments, postAssignment, getAssignment, updateAssignment, addRendus, addGroupes, deleteAssignment,getAssignmentsByGroupId,updateRendu };
