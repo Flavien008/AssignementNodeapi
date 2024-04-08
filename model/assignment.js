@@ -6,7 +6,8 @@ let AssignmentSchema = Schema({
     titre: String,
     description: String,
     matiere: String,
-    dateLimite: String,
+    dateCreation: Date,
+    dateLimite: Date,
     groupe: [{
         idGroupe: String
     }],

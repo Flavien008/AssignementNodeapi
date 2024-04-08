@@ -114,6 +114,8 @@ async function getPercentageAssignmentsBySubject(req, res) {
 async function postAssignment(req, res) {
     try {
         const assignmentData = req.body;
+        // Ajout de la date de création
+        assignmentData.dateCreation = Date.now();
         const assignment = new Assignment(assignmentData);
         await assignment.save();
         res.status(201).json({ message: `${assignment.titre} saved!` });
@@ -121,6 +123,7 @@ async function postAssignment(req, res) {
         res.status(500).send(error);
     }
 }
+
 
 // Update d'un assignment (PUT)
 async function updateAssignment(req, res) {
