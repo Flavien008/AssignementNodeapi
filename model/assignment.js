@@ -24,6 +24,7 @@ let AssignmentSchema = Schema({
     }]
 });
 
+AssignmentSchema.index({ dateCreation: 1 });
 AssignmentSchema.plugin(mongoosePaginate);
 
 
