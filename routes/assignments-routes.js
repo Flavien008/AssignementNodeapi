@@ -160,8 +160,8 @@ async function addRendus(req, res) {
 
 async function getAssignmentCountBetweenDates(req, res) {
     try {
-        const startDate = moment.utc(req.query.date1, 'DD/MM/YYYY').startOf('day').toDate();
-        const endDate = moment.utc(req.query.date2, 'DD/MM/YYYY').endOf('day').toDate();
+        const startDate = moment.utc(req.query.date1, 'YYYY-MM-DD').startOf('day').toDate();
+        const endDate = moment.utc(req.query.date2, 'YYYY-MM-DD').endOf('day').toDate();
 
         console.log("startdate: ", startDate);
         console.log("endDate: ", endDate);
