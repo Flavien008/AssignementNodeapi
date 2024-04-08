@@ -60,7 +60,7 @@ app.route(prefix + '/assignments')
   .put(assignmentroutes.updateAssignment)
   .get(assignmentroutes.getAssignments);
 
-  app.route(prefix + '/statistique/matiere')
+  app.route(prefix + '/matiere/statistique')
   .get(assignmentroutes.getPercentageAssignmentsBySubject);
 
 app.route(prefix + '/assignments/:id')
