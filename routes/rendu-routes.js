@@ -49,6 +49,51 @@ async function deleteRendu(req, res) {
     } catch (error) {
         res.status(500).send(error);
     }
+
+    
 }
 
-module.exports = { createRendu, getRenduById, updateRendu, deleteRendu };
+
+async function getRendus(req, res) {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const filter = req.query.filter || 'all'; // 'all', 'withNotes', 'withoutNotes'
+        const idAssignment = req.query.idAssignment;
+        const idEtudiant = req.query.idEtudiant;
+
+        const matchStage = {
+            $match: {},
+        };
+
+        if (idAssignment) {
+            matchStage.$match.idAssignment = idAssignment;
+        }
+
+        if (idEtudiant) {
+            matchStage.$match.idEtudiant = idEtudiant;
+        }
+
+        if (filter === 'withNotes') {
+            matchStage.$match.note = { $exists: true, $ne: null };
+        } else if (filter === 'withoutNotes') {
+            matchStage.$match.note = null;
+        }
+
+        const options = {
+            page: page,
+            limit: limit
+        };
+
+        const aggregation = Rendu.aggregate([matchStage]);
+        const rendus = await Rendu.aggregatePaginate(aggregation, options);
+        console.log(rendus);
+        res.json(rendus);
+    } catch (error) {
+        console.log('Erreur lors de la récupération des rendus :', error);
+        res.status(500).send(error);
+    }
+}
+
+
+module.exports = { createRendu, getRenduById, updateRendu, deleteRendu, getRendus };

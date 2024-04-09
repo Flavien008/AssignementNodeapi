@@ -75,7 +75,8 @@ app.route(prefix + '/assignments/:id')
   .get(assignmentroutes.getAssignmentsByGroupId);
 
   app.route(prefix + '/rendu')
-  .post(renduroutes.createRendu);
+  .post(renduroutes.createRendu)
+  .get(renduroutes.getRendus);
 
   app.route(prefix +'/assignments/:assignmentId/rendu/:renduId')
   .put(assignmentroutes.updateRendu);
