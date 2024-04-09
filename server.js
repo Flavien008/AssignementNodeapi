@@ -5,6 +5,7 @@ let assignmentroutes = require('./routes/assignments-routes');
 let userroutes = require('./routes/user-routes');
 let matiereroutes = require('./routes/matiere-routes');
 let grouperoutes = require('./routes/groupe-routes');
+let renduroutes = require('./routes/rendu-routes');
 
 let mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
@@ -73,8 +74,8 @@ app.route(prefix + '/assignments/:id')
   app.route(prefix + '/assignments/group/:id')
   .get(assignmentroutes.getAssignmentsByGroupId);
 
-  app.route(prefix + '/rendu/:id')
-  .post(assignmentroutes.addRendus);
+  app.route(prefix + '/rendu')
+  .post(renduroutes.createRendu);
 
   app.route(prefix +'/assignments/:assignmentId/rendu/:renduId')
   .put(assignmentroutes.updateRendu);

@@ -14,7 +14,7 @@ let RenduSchema = Schema({
     remarque: String
 });
 
-RenduSchema .plugin(mongoosePaginate);
+RenduSchema.plugin(mongoosePaginate);
 
 
 // C'est à travers ce modèle Mongoose qu'on pourra faire le CRUD
