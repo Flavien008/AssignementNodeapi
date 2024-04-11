@@ -58,6 +58,9 @@ app.route(prefix + '/login')
 app.route(prefix + '/etudiants')
     .get(userroutes.getStudents)
 
+app.route(prefix + '/etudiants/groupes')
+    .get(userroutes.getStudentsNotInGroup)
+
 // http://serveur..../assignments
 app.route(prefix + '/assignments')
     .post(assignmentroutes.postAssignment)

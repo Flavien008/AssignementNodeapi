@@ -1,15 +1,6 @@
 let Assignment = require('../model/assignment');
 let mongoose = require('mongoose');
 const moment = require('moment');
-// Récupérer tous les assignments (GET)
-// function getAssignments(req, res){
-//     Assignment.find((err, assignment) => {
-//         if(err){
-//             res.send(err)
-//         }
-//         res.send(assignment);
-//     });
-// }
 
 async function getAssignments(req, res) {
     try {
