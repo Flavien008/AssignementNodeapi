@@ -87,6 +87,11 @@ async function getPercentageAssignmentsBySubject(req, res) {
         // Utilisation de l'agrégation MongoDB pour compter le nombre d'Assignments par matière
         const assignmentsBySubject = await Assignment.aggregate([
             {
+                $match: {
+                    matiere: { $ne: null }
+                }
+            },
+            {
                 $group: {
                     _id: '$matiere',
                     count: { $sum: 1 }
