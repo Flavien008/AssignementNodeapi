@@ -58,8 +58,11 @@ app.route(prefix + '/login')
 app.route(prefix + '/etudiants')
     .get(userroutes.getStudents)
 
-app.route(prefix + '/etudiants/groupes')
+app.route(prefix + '/etudiants/not-in-group')
     .get(userroutes.getStudentsNotInGroup)
+
+app.route(prefix + '/etudiants/in-group')
+    .get(userroutes.getStudentsInGroup)
 
 // http://serveur..../assignments
 app.route(prefix + '/assignments')

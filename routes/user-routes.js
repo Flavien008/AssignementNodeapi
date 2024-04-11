@@ -142,7 +142,42 @@ async function getStudentsNotInGroup(req, res) {
     }
 }
 
+async function getStudentsInGroup(req, res) {
+    try {
+        const groupId = req.query.idgroupe;
+        console.log("groupe id"+groupId);
+        let filtre = req.query.filtre;
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const options = {
+            page: page,
+            limit: limit
+        };
+
+        const regexFiltre = new RegExp(filtre, 'i');
+        const matchStage = {
+            $match: {
+                role: { $ne: null, $eq: "student" },
+                _id: { $in: groupId ? (await Groupe.findById(groupId)).utilisateurs : [] }
+            }
+        };
+
+        if (filtre && regexFiltre !== '') {
+            matchStage.$match.$or = [
+                { username: { $regex: regexFiltre } },
+                { name: { $regex: regexFiltre } },
+            ];
+        }
+
+        const aggregation = User.aggregate([matchStage]);
+        const studentsNotInGroup = await User.aggregatePaginate(aggregation, options);
+
+        res.json(studentsNotInGroup);
+    } catch (error) {
+        console.log('Erreur lors de la récupération des étudiants non dans le groupe:', error);
+        res.status(500).send(error);
+    }
+}
 
 
-
-module.exports = { signup, login,getStudents,getStudentsNotInGroup };
+module.exports = { signup, login,getStudents,getStudentsNotInGroup,getStudentsInGroup };
