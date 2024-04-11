@@ -149,11 +149,12 @@ function removeUserToGroup(req, res) {
     const groupId = req.body.groupId;
     const studentIds = req.body.studentIds;
   
-    console.log('id groupe', groupId);
+    console.log('Group ID:', groupId);
   
     Group.findById(groupId, (err, group) => {
       if (err) {
-        res.send(err);
+        console.error(err);
+        res.status(500).json({ message: "Internal Server Error" });
         return;
       }
   
@@ -164,18 +165,20 @@ function removeUserToGroup(req, res) {
   
       // Remove students using filter
       group.utilisateurs = group.utilisateurs.filter(
-        (utilisateurId) => !studentIds.includes(utilisateurId)
+        (utilisateurId) => !studentIds.includes(utilisateurId.toString())
       );
   
       group.save((err) => {
         if (err) {
-          res.send(err);
+          console.error(err);
+          res.status(500).json({ message: "Failed to save group" });
           return;
         }
         res.json({ message: "Users removed from group successfully" });
       });
     });
   }
+  
   
 
 module.exports = { removeUserToGroup,getGroups, getGroup, createGroup, updateGroup, deleteGroup,addUserToGroup,getGroupes,getGroupesByStudent};
