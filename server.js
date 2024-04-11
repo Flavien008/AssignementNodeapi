@@ -98,8 +98,12 @@ app.route(prefix + '/matiere')
 //pour groupes
 app.route(prefix + '/groupes')
     .get(grouperoutes.getGroupes)
-    .post(grouperoutes.postGroup)
+    .post(grouperoutes.createGroup)
     .put(grouperoutes.updateGroup)
+
+app.route(prefix + '/groupes/membre')
+    .post(grouperoutes.addUserToGroup)
+    .delete(grouperoutes.removeUserToGroup)
 
 app.route(prefix + '/groupesAll')
     .get(grouperoutes.getGroups)

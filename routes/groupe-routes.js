@@ -82,7 +82,7 @@ function getGroup(req, res){
 }
 
 // Ajout d'un groupe (POST)
-function postGroup(req, res){
+function createGroup(req, res){
     let group = new Group();
     group.nom = req.body.nom;
     group.utilisateurs = req.body.utilisateurs; // Vous devrez passer une liste d'utilisateurs
@@ -117,9 +117,11 @@ function deleteGroup(req, res){
 
 // Ajouter un utilisateur à un groupe (POST)
 function addUserToGroup(req, res){
-    const groupId = req.params.groupId;
-    const userId = req.body.userId;
+    const groupId = req.body.groupId;
+    const studentIds = req.body.studentIds;
 
+    console.log('id groupe'+groupId);
+    
     Group.findById(groupId, (err, group) => {
         if(err){
             res.send(err);
@@ -131,16 +133,49 @@ function addUserToGroup(req, res){
             return;
         }
 
-        group.utilisateurs.push(userId);
+        studentIds.forEach(studentId => group.utilisateurs.push(studentId));
 
         group.save((err) => {
             if(err){
                 res.send(err);
                 return;
             }
-            res.json({ message: "User added to group successfully" });
+            res.json({ message: "Users added to group successfully" });
         });
     });
 }
 
-module.exports = { getGroups, getGroup, postGroup, updateGroup, deleteGroup,addUserToGroup,getGroupes,getGroupesByStudent};
+function removeUserToGroup(req, res) {
+    const groupId = req.body.groupId;
+    const studentIds = req.body.studentIds;
+  
+    console.log('id groupe', groupId);
+  
+    Group.findById(groupId, (err, group) => {
+      if (err) {
+        res.send(err);
+        return;
+      }
+  
+      if (!group) {
+        res.status(404).json({ message: "Group not found" });
+        return;
+      }
+  
+      // Remove students using filter
+      group.utilisateurs = group.utilisateurs.filter(
+        (utilisateurId) => !studentIds.includes(utilisateurId)
+      );
+  
+      group.save((err) => {
+        if (err) {
+          res.send(err);
+          return;
+        }
+        res.json({ message: "Users removed from group successfully" });
+      });
+    });
+  }
+  
+
+module.exports = { removeUserToGroup,getGroups, getGroup, createGroup, updateGroup, deleteGroup,addUserToGroup,getGroupes,getGroupesByStudent};
