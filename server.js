@@ -101,6 +101,9 @@ app.route(prefix + '/groupes')
     .post(grouperoutes.createGroup)
     .put(grouperoutes.updateGroup)
 
+app.route(prefix + '/groupe/:id')
+    .get(grouperoutes.getGroup)
+
 app.route(prefix + '/groupes/membre')
     .post(grouperoutes.addUserToGroup)
     .delete(grouperoutes.removeUserToGroup)
