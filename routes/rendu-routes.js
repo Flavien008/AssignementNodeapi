@@ -85,6 +85,7 @@ async function getRendus(req, res) {
             limit: limit
         };
 
+
         const aggregation = Rendu.aggregate([matchStage]);
         const rendus = await Rendu.aggregatePaginate(aggregation, options);
         console.log(rendus);
