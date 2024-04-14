@@ -85,15 +85,19 @@ app.route(prefix + '/assignments/group/:id')
 
 app.route(prefix + '/rendu')
     .post(renduroutes.createRendu)
-    .get(renduroutes.getRendus);
-
-app.route(prefix + '/assignments/:assignmentId/rendu/:renduId')
-    .put(assignmentroutes.updateRendu);
-
+    .get(renduroutes.getRendus)
+    .put(renduroutes.updateRendu)
 
 app.route(prefix + '/matiere')
     .get(matiereroutes.getMatieres)
-    .post(matiereroutes.saveMatiere);
+    .post(matiereroutes.createMatiere)
+    .put(matiereroutes.updateMatiere);
+
+app.route(prefix + '/matiere/:id')
+    .get(matiereroutes.getMatiereById)
+    .delete(matiereroutes.deleteMatiere);
+
+
 
 //pour groupes
 app.route(prefix + '/groupes')
@@ -119,7 +123,6 @@ app.route(prefix + '/groupes/etudiant/:id')
 app.route(prefix + '/groupes/:id')
     .get(grouperoutes.getGroup)
     .delete(grouperoutes.deleteGroup)
-
 
 
 // On démarre le serveur

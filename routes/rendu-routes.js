@@ -26,7 +26,7 @@ async function getRenduById(req, res) {
 
 async function updateRendu(req, res) {
     try {
-        const renduId = req.params.id;
+        const renduId = req.body._id;
         const updatedRendu = req.body;
         const rendu = await Rendu.findByIdAndUpdate(renduId, updatedRendu, { new: true });
         if (!rendu) {
