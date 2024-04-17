@@ -6,6 +6,7 @@ let userroutes = require('./routes/user-routes');
 let matiereroutes = require('./routes/matiere-routes');
 let grouperoutes = require('./routes/groupe-routes');
 let renduroutes = require('./routes/rendu-routes');
+const auth = require('./middlewares/authMiddleware');
 
 let mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
@@ -32,12 +33,14 @@ mongoose.connect(uri, options)
         });
 
 // Pour accepter les connexions cross-domain (CORS)
-app.use(function (req, res, next) {
+app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
     next();
 });
+
+
 
 // Pour les formulaires
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -56,73 +59,71 @@ app.route(prefix + '/login')
     .post(userroutes.login)
 
 app.route(prefix + '/etudiants')
-    .get(userroutes.getStudents)
+    .get(auth,userroutes.getStudents)
 
 app.route(prefix + '/etudiants/not-in-group')
-    .get(userroutes.getStudentsNotInGroup)
+    .get(auth,userroutes.getStudentsNotInGroup)
 
 app.route(prefix + '/etudiants/in-group')
-    .get(userroutes.getStudentsInGroup)
+    .get(auth,userroutes.getStudentsInGroup)
 
 // http://serveur..../assignments
 app.route(prefix + '/assignments')
-    .post(assignmentroutes.postAssignment)
-    .put(assignmentroutes.updateAssignment)
-    .get(assignmentroutes.getAssignments);
+    .post(auth,assignmentroutes.postAssignment)
+    .put(auth,assignmentroutes.updateAssignment)
+    .get(auth,assignmentroutes.getAssignments);
 
 app.route(prefix + '/matiere/statistique')
-    .get(assignmentroutes.getPercentageAssignmentsBySubject);
+    .get(auth,assignmentroutes.getPercentageAssignmentsBySubject);
 
 app.route(prefix + '/assignments/statistique')
-    .get(assignmentroutes.getAssignmentCountBetweenDates);
+    .get(auth,assignmentroutes.getAssignmentCountBetweenDates);
 
 app.route(prefix + '/assignments/:id')
-    .get(assignmentroutes.getAssignment)
-    .delete(assignmentroutes.deleteAssignment);
+    .get(auth,assignmentroutes.getAssignment)
+    .delete(auth,assignmentroutes.deleteAssignment);
 
 app.route(prefix + '/assignments/group/:id')
-    .get(assignmentroutes.getAssignmentsByGroupId);
+    .get(auth,assignmentroutes.getAssignmentsByGroupId);
 
 app.route(prefix + '/rendu')
-    .post(renduroutes.createRendu)
-    .get(renduroutes.getRendus)
-    .put(renduroutes.updateRendu)
+    .post(auth,renduroutes.createRendu)
+    .get(auth,renduroutes.getRendus)
+    .put(auth,renduroutes.updateRendu)
 
 app.route(prefix + '/matiere')
-    .get(matiereroutes.getMatieres)
-    .post(matiereroutes.createMatiere)
-    .put(matiereroutes.updateMatiere);
+    .get(auth,matiereroutes.getMatieres)
+    .post(auth,matiereroutes.createMatiere)
+    .put(auth,matiereroutes.updateMatiere);
 
 app.route(prefix + '/matiere/:id')
-    .get(matiereroutes.getMatiereById)
-    .delete(matiereroutes.deleteMatiere);
+    .get(auth,matiereroutes.getMatiereById)
+    .delete(auth,matiereroutes.deleteMatiere);
 
 
 
 //pour groupes
 app.route(prefix + '/groupes')
-    .get(grouperoutes.getGroupes)
-    .post(grouperoutes.createGroup)
-    .put(grouperoutes.updateGroup)
+    .get(auth,grouperoutes.getGroupes)
+    .post(auth,grouperoutes.createGroup)
+    .put(auth,grouperoutes.updateGroup)
 
 app.route(prefix + '/groupe/:id')
-    .get(grouperoutes.getGroup)
+    .get(auth,grouperoutes.getGroup)
 
 app.route(prefix + '/groupes/membre')
-    .post(grouperoutes.addUserToGroup)
-    .delete(grouperoutes.removeUserToGroup)
+    .post(auth,grouperoutes.addUserToGroup)
+    .delete(auth,grouperoutes.removeUserToGroup)
 
 app.route(prefix + '/groupesAll')
-    .get(grouperoutes.getGroups)
+    .get(auth,grouperoutes.getGroups)
 
 app.route(prefix + '/groupes/etudiant/:id')
-    .get(grouperoutes.getGroupesByStudent);
-
-
+    .get(auth,grouperoutes.getGroupesByStudent);
 
 app.route(prefix + '/groupes/:id')
-    .get(grouperoutes.getGroup)
-    .delete(grouperoutes.deleteGroup)
+    .get(auth,grouperoutes.getGroup)
+    .delete(auth,grouperoutes.deleteGroup)
 
 
 // On démarre le serveur
