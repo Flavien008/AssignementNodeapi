@@ -80,6 +80,9 @@ Authorization: Bearer <token>
 
 Le middleware d'authentification de l'API valide chaque requête en vérifiant la présence et la validité du jeton d'authentification. Si le jeton est valide, l'utilisateur est autorisé à accéder à l'endpoint demandé. Sinon, une réponse d'erreur est renvoyée.
 
+## Lien sur Render.com
+https://assignementnodeapi.onrender.com/api
+
 ## Prérequis Techniques
 
 - Node.js version : v14.17.0
