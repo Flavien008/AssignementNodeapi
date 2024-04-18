@@ -1,4 +1,3 @@
-Voici votre README pour le backend API :
 # Backend API de l'Application de Gestion des Assignements
 
 Ce backend API est conçu pour servir de support à l'application de gestion des assignements dans un environnement éducatif ou professionnel. Il fournit des endpoints pour gérer les utilisateurs, les assignements, les groupes, les rendus, les matières, etc. L'API est développée en utilisant Node.js et Express.js, et elle communique avec une base de données MongoDB dans le cloud.
