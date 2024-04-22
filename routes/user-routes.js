@@ -139,7 +139,7 @@ async function getProfs(req, res) {
         console.log(liste);
         res.json(liste);
     } catch (error) {
-        console.log('Erreur lors de la récupération des édtudiants:', error);
+        console.log('Erreur lors de la récupération des profs:', error);
         res.status(500).send(error);
     }
 }
