@@ -33,7 +33,7 @@ mongoose.connect(uri, options)
         });
 
 // Pour accepter les connexions cross-domain (CORS)
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
@@ -59,71 +59,74 @@ app.route(prefix + '/login')
     .post(userroutes.login)
 
 app.route(prefix + '/etudiants')
-    .get(auth,userroutes.getStudents)
+    .get(auth, userroutes.getStudents)
 
 app.route(prefix + '/etudiants/not-in-group')
-    .get(auth,userroutes.getStudentsNotInGroup)
+    .get(auth, userroutes.getStudentsNotInGroup)
 
 app.route(prefix + '/etudiants/in-group')
-    .get(auth,userroutes.getStudentsInGroup)
+    .get(auth, userroutes.getStudentsInGroup)
+
+app.route(prefix + '/profs')
+    .get(auth, userroutes.getProfs)
 
 // http://serveur..../assignments
 app.route(prefix + '/assignments')
-    .post(auth,assignmentroutes.postAssignment)
-    .put(auth,assignmentroutes.updateAssignment)
-    .get(auth,assignmentroutes.getAssignments);
+    .post(auth, assignmentroutes.postAssignment)
+    .put(auth, assignmentroutes.updateAssignment)
+    .get(auth, assignmentroutes.getAssignments);
 
 app.route(prefix + '/matiere/statistique')
-    .get(auth,assignmentroutes.getPercentageAssignmentsBySubject);
+    .get(auth, assignmentroutes.getPercentageAssignmentsBySubject);
 
 app.route(prefix + '/assignments/statistique')
-    .get(auth,assignmentroutes.getAssignmentCountBetweenDates);
+    .get(auth, assignmentroutes.getAssignmentCountBetweenDates);
 
 app.route(prefix + '/assignments/:id')
-    .get(auth,assignmentroutes.getAssignment)
-    .delete(auth,assignmentroutes.deleteAssignment);
+    .get(auth, assignmentroutes.getAssignment)
+    .delete(auth, assignmentroutes.deleteAssignment);
 
 app.route(prefix + '/assignments/group/:id')
-    .get(auth,assignmentroutes.getAssignmentsByGroupId);
+    .get(auth, assignmentroutes.getAssignmentsByGroupId);
 
 app.route(prefix + '/rendu')
-    .post(auth,renduroutes.createRendu)
-    .get(auth,renduroutes.getRendus)
-    .put(auth,renduroutes.updateRendu)
+    .post(auth, renduroutes.createRendu)
+    .get(auth, renduroutes.getRendus)
+    .put(auth, renduroutes.updateRendu)
 
 app.route(prefix + '/matiere')
-    .get(auth,matiereroutes.getMatieres)
-    .post(auth,matiereroutes.createMatiere)
-    .put(auth,matiereroutes.updateMatiere);
+    .get(auth, matiereroutes.getMatieres)
+    .post(auth, matiereroutes.createMatiere)
+    .put(auth, matiereroutes.updateMatiere);
 
 app.route(prefix + '/matiere/:id')
-    .get(auth,matiereroutes.getMatiereById)
-    .delete(auth,matiereroutes.deleteMatiere);
+    .get(auth, matiereroutes.getMatiereById)
+    .delete(auth, matiereroutes.deleteMatiere);
 
 
 
 //pour groupes
 app.route(prefix + '/groupes')
-    .get(auth,grouperoutes.getGroupes)
-    .post(auth,grouperoutes.createGroup)
-    .put(auth,grouperoutes.updateGroup)
+    .get(auth, grouperoutes.getGroupes)
+    .post(auth, grouperoutes.createGroup)
+    .put(auth, grouperoutes.updateGroup)
 
 app.route(prefix + '/groupe/:id')
-    .get(auth,grouperoutes.getGroup)
+    .get(auth, grouperoutes.getGroup)
 
 app.route(prefix + '/groupes/membre')
-    .post(auth,grouperoutes.addUserToGroup)
-    .delete(auth,grouperoutes.removeUserToGroup)
+    .post(auth, grouperoutes.addUserToGroup)
+    .delete(auth, grouperoutes.removeUserToGroup)
 
 app.route(prefix + '/groupesAll')
-    .get(auth,grouperoutes.getGroups)
+    .get(auth, grouperoutes.getGroups)
 
 app.route(prefix + '/groupes/etudiant/:id')
-    .get(auth,grouperoutes.getGroupesByStudent);
+    .get(auth, grouperoutes.getGroupesByStudent);
 
 app.route(prefix + '/groupes/:id')
-    .get(auth,grouperoutes.getGroup)
-    .delete(auth,grouperoutes.deleteGroup)
+    .get(auth, grouperoutes.getGroup)
+    .delete(auth, grouperoutes.deleteGroup)
 
 
 // On démarre le serveur

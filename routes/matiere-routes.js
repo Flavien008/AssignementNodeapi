@@ -53,11 +53,35 @@ async function deleteMatiere(req, res) {
 
 async function getMatieres(req, res) {
     try {
-        const matieres = await Matiere.find();
-        res.json(matieres);
+        let nom = req.query.nom; // Filtre par nom de matière
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const options = {
+            page: page,
+            limit: limit
+        };
+
+        const regexNom = new RegExp(nom, 'i');
+        const matchStage = {
+            $match: {},
+        };
+        
+        if (nom && regexNom !== '') {
+            matchStage.$match = {
+                nom: { $regex: regexNom }
+            };
+        }
+
+        // Exécuter l'agrégation avec les étapes de filtrage définies
+        const aggregation = Matiere.aggregate([matchStage]);
+        const liste = await Matiere.aggregatePaginate(aggregation, options);
+        console.log(liste);
+        res.json(liste);
     } catch (error) {
+        console.log('Erreur lors de la récupération des matières:', error);
         res.status(500).send(error);
     }
 }
+
 
 module.exports = { createMatiere, getMatiereById, updateMatiere, deleteMatiere, getMatieres };
