@@ -152,7 +152,13 @@ async function getAllProfs(req, res) {
             }
         };
 
-        const aggregation = await User.aggregate([matchStage]);
+        const sortStage = {
+            $sort: {
+                name: 1
+            }
+        };
+
+        const aggregation = await User.aggregate([matchStage, sortStage]);
         console.log(aggregation);
         res.json(aggregation);
     } catch (error) {
@@ -160,6 +166,7 @@ async function getAllProfs(req, res) {
         res.status(500).send(error);
     }
 }
+
 
 
 async function getAssignment(req, res) {
