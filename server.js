@@ -43,8 +43,9 @@ app.use(function (req, res, next) {
 
 
 // Pour les formulaires
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
+app.use(bodyParser.json({ limit: '50mb' }));
+
 
 // Obligatoire si déploiement dans le cloud !
 let port = process.env.PORT || 8010;
@@ -101,6 +102,9 @@ app.route(prefix + '/matiere')
     .get(auth, matiereroutes.getMatieres)
     .post(auth, matiereroutes.createMatiere)
     .put(auth, matiereroutes.updateMatiere);
+
+app.route(prefix + '/matieres')
+    .get(auth, matiereroutes.getMatiere)
 
 app.route(prefix + '/matiere/:id')
     .get(auth, matiereroutes.getMatiereById)

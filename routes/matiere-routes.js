@@ -51,6 +51,15 @@ async function deleteMatiere(req, res) {
     }
 }
 
+async function getMatiere(req, res) {
+    Matiere.find((err, matieres) => {
+        if (err) {
+            res.send(err);
+        }
+        res.json(matieres);
+    });
+}
+
 async function getMatieres(req, res) {
     try {
         let nom = req.query.nom; // Filtre par nom de matière
@@ -65,7 +74,7 @@ async function getMatieres(req, res) {
         const matchStage = {
             $match: {},
         };
-        
+
         if (nom && regexNom !== '') {
             matchStage.$match = {
                 nom: { $regex: regexNom }
@@ -84,4 +93,4 @@ async function getMatieres(req, res) {
 }
 
 
-module.exports = { createMatiere, getMatiereById, updateMatiere, deleteMatiere, getMatieres };
+module.exports = { createMatiere, getMatiereById, updateMatiere, deleteMatiere, getMatieres, getMatiere };
