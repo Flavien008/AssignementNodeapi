@@ -70,6 +70,9 @@ app.route(prefix + '/etudiants/in-group')
 app.route(prefix + '/profs')
     .get(auth, userroutes.getProfs)
 
+app.route(prefix + '/allprofs')
+    .get(auth, userroutes.getAllProfs)
+
 // http://serveur..../assignments
 app.route(prefix + '/assignments')
     .post(auth, assignmentroutes.postAssignment)

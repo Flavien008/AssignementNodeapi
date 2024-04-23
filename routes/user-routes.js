@@ -144,10 +144,40 @@ async function getProfs(req, res) {
     }
 }
 
+async function getAllProfs(req, res) {
+    try {
+        const matchStage = {
+            $match: {
+                role: "prof"
+            }
+        };
+
+        const aggregation = await User.aggregate([matchStage]);
+        console.log(aggregation);
+        res.json(aggregation);
+    } catch (error) {
+        console.log('Erreur lors de la récupération des profs:', error);
+        res.status(500).send(error);
+    }
+}
+
+
+async function getAssignment(req, res) {
+    try {
+        const assignment = await Assignment.filtre(assignmentId);
+        if (!assignment) {
+            return res.status(404).json({ message: "Assignment not found" });
+        }
+        res.json(assignment);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+}
+
 async function getStudentsNotInGroup(req, res) {
     try {
         const groupId = req.query.idgroupe;
-        console.log("groupe id"+groupId);
+        console.log("groupe id" + groupId);
         let filtre = req.query.filtre;
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
@@ -184,7 +214,7 @@ async function getStudentsNotInGroup(req, res) {
 async function getStudentsInGroup(req, res) {
     try {
         const groupId = req.query.idgroupe;
-        console.log("groupe id"+groupId);
+        console.log("groupe id" + groupId);
         let filtre = req.query.filtre;
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
@@ -219,4 +249,4 @@ async function getStudentsInGroup(req, res) {
 }
 
 
-module.exports = { signup, login,getStudents,getStudentsNotInGroup,getStudentsInGroup,getProfs };
+module.exports = { signup, login, getStudents, getStudentsNotInGroup, getStudentsInGroup, getProfs, getAllProfs};
