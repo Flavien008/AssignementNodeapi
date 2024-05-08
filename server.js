@@ -6,6 +6,7 @@ let userroutes = require('./routes/user-routes');
 let matiereroutes = require('./routes/matiere-routes');
 let grouperoutes = require('./routes/groupe-routes');
 let renduroutes = require('./routes/rendu-routes');
+let mailroutes = require('./routes/mail');
 const auth = require('./middlewares/authMiddleware');
 
 let mongoose = require('mongoose');
@@ -134,6 +135,9 @@ app.route(prefix + '/groupes/etudiant/:id')
 app.route(prefix + '/groupes/:id')
     .get(auth, grouperoutes.getGroup)
     .delete(auth, grouperoutes.deleteGroup)
+
+app.route(prefix + '/sendmail')
+    .get(auth, mailroutes.sendMail)
 
 
 // On démarre le serveur
