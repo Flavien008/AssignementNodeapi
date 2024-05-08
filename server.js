@@ -137,7 +137,7 @@ app.route(prefix + '/groupes/:id')
     .delete(auth, grouperoutes.deleteGroup)
 
 app.route(prefix + '/sendmail')
-    .get(auth, mailroutes.sendMail)
+    .post(auth, mailroutes.sendMail)
 
 
 // On démarre le serveur
