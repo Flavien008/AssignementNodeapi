@@ -25,6 +25,7 @@ async function getAssignments(req, res) {
                 $or: [
                     { titre: { $regex: regexTitre } },
                     { description: { $regex: regexTitre } },
+                    { matiere: { $regex: regexTitre } }
                 ],
             };
         }
