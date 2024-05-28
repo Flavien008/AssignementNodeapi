@@ -21,7 +21,8 @@ let AssignmentSchema = Schema({
         description: String,
         note: String,
         remarque: String
-    }]
+    }],
+    matierePhoto : String
 });
 
 AssignmentSchema.index({ dateCreation: 1 });
