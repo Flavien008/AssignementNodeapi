@@ -50,8 +50,11 @@ async function getAssignments(req, res) {
             matchStage.$match.$and.push({ "groupe.idGroupe": groupe });
         }
         
+        const sortStage = {
+            $sort: { dateCreation: -1 } 
+        };
 
-        const aggregation = Assignment.aggregate([matchStage ]);
+        const aggregation = Assignment.aggregate([matchStage, sortStage]);
         const liste = await Assignment.aggregatePaginate(aggregation, options);
         console.log(liste);
         res.json(liste);
