@@ -76,6 +76,9 @@ app.route(prefix + '/allprofs')
     .get(auth, userroutes.getAllProfs)
 
 // http://serveur..../assignments
+
+app.route(prefix + '/updateAss').get(assignmentroutes.updateAssignementsDate);
+
 app.route(prefix + '/assignments')
     .post(auth, assignmentroutes.postAssignment)
     .put(auth, assignmentroutes.updateAssignment)

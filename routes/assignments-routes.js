@@ -1,6 +1,7 @@
 let Assignment = require('../model/assignment');
 let mongoose = require('mongoose');
 const moment = require('moment');
+const Matiere = require('../model/matiere');
 
 async function getAssignments(req, res) {
     try {
@@ -329,4 +330,68 @@ async function getAssignmentsByGroupId(req, res) {
     }
 }
 
-module.exports = { getAssignmentCountBetweenDates,getPercentageAssignmentsBySubject,getAssignments, postAssignment, getAssignment, updateAssignment, addRendus, addGroupes, deleteAssignment,getAssignmentsByGroupId,updateRendu };
+async function updateAssignementsMatiere(req, res) {
+    try {
+        // Obtenez tous les assignements
+        const assignments = await Assignment.find();
+
+        var i = 0
+        for(let assignment of assignments) {
+
+            console.log("ato");
+            // Obtenez une matière aléatoire
+            const randomMatiere = await Matiere.aggregate([{ $sample: { size: 1 } }]);
+
+            console.log("matiere"+randomMatiere[0].nom);
+
+                // Mettez à jour l'assignement avec le nom de matière aléatoire
+                assignment.matiere = randomMatiere[0].nom;
+                console.log(i);
+                i+=1
+                await assignment.save();
+        }
+
+        res.json({ message: 'Assignments updated successfully'+i });
+    } catch (error) {
+        console.error("Error updating assignments:", error);
+        res.status(500).send(error);
+    }
+}
+
+function getRandomDate(start, end) {
+    return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+}
+
+
+async function updateAssignementsDate(req, res) {
+    try {
+        // Obtenez tous les assignements
+        const assignments = await Assignment.find();
+
+        var i = 0;
+        for (let assignment of assignments) {
+            // Obtenez une date aléatoire pour dateCreation
+            const randomDateCreation = getRandomDate(new Date("2024-01-01"), new Date("2024-05-28"));
+            console.log("dateCreation: " + randomDateCreation);
+
+            // Obtenez une date aléatoire pour dateLimite après la date de création
+            const randomDateLimite = getRandomDate(randomDateCreation, new Date("2024-12-31"));
+            console.log("dateLimite: " + randomDateLimite);
+
+            // Mettez à jour l'assignement avec les dates aléatoires
+            assignment.dateCreation = randomDateCreation;
+            assignment.dateLimite = randomDateLimite;
+            console.log(i);
+            i += 1;
+            await assignment.save();
+        }
+
+        res.json({ message: 'Assignments updated successfully' + i });
+    } catch (error) {
+        console.error("Error updating assignments:", error);
+        res.status(500).send(error);
+    }
+}
+
+
+module.exports = { updateAssignementsDate,updateAssignementsMatiere,getAssignmentCountBetweenDates,getPercentageAssignmentsBySubject,getAssignments, postAssignment, getAssignment, updateAssignment, addRendus, addGroupes, deleteAssignment,getAssignmentsByGroupId,updateRendu };
