@@ -10,12 +10,12 @@ let transporter = nodemailer.createTransport({
 
 const sendMail = async (req, res) => {
     try {
-        let { from, to, subject, text } = req.body;
+        let { from, to, subject, html } = req.body;
         transporter.sendMail({
             from,
             to,
             subject,
-            text
+            html
         }, (error, info) => {
             if (error) {
                 console.log(error);
