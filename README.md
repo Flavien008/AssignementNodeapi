@@ -62,19 +62,20 @@ models/: Répertoire contenant les modèles de données MongoDB.
   - `PUT /api/rendu`: Met à jour un rendu existant.
   - `GET /api/rendu`: Récupère la liste des rendus.
 
+## Exemple d'utilisation du Jeton d'Authentification
 
-## Gestion des Jetons d'Authentification
-
-L'API utilise des jetons d'authentification pour sécuriser les endpoints réservés aux utilisateurs connectés. Lorsqu'un utilisateur se connecte avec succès, un jeton d'authentification est généré et renvoyé dans la réponse. Ce jeton doit être inclus dans les en-têtes de toutes les requêtes ultérieures aux endpoints nécessitant une authentification.
+Gestion des Jetons d'Authentification
+L'API utilise des jetons d'authentification JWT (JSON Web Tokens) pour sécuriser les endpoints réservés aux utilisateurs connectés. Lorsqu'un utilisateur se connecte avec succès, un jeton d'authentification JWT est généré et renvoyé dans la réponse. Ce jeton doit être inclus dans les en-têtes de toutes les requêtes ultérieures aux endpoints nécessitant une authentification.
 
 ### Exemple d'utilisation du Jeton d'Authentification
+Pour inclure le jeton d'authentification dans une requête, ajoutez un en-tête `Authorization` avec la valeur `Bearer <token>` où `<token>` est le jeton d'authentification JWT reçu lors de la connexion.
 
-Pour inclure le jeton d'authentification dans une requête, ajoutez un en-tête `Authorization` avec la valeur `Bearer <token>` où `<token>` est le jeton d'authentification reçu lors de la connexion.
-
-Exemple d'en-tête d'authentification :
-```
+### Exemple d'en-tête d'authentification :
+```plaintext
 Authorization: Bearer <token>
 ```
+
+Assurez-vous de remplacer `<token>` par le jeton JWT réel que vous avez reçu. Ce jeton doit être inclus dans l'en-tête de toutes les requêtes ultérieures vers les endpoints protégés pour garantir que l'utilisateur est authentifié et autorisé à accéder aux ressources demandées.
 
 ### Validation du Jeton d'Authentification
 
