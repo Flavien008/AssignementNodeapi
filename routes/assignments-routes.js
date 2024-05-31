@@ -1,6 +1,9 @@
 let Assignment = require('../model/assignment');
 let mongoose = require('mongoose');
 const moment = require('moment');
+const Matiere = require('../model/matiere');
+let User = require('../model/user');
+
 
 async function getAssignments(req, res) {
     try {
@@ -9,13 +12,16 @@ async function getAssignments(req, res) {
         let groupe = req.query.groupe; 
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
+        const sortField = req.query.sortField || 'dateCreation'; // Field to sort by, default is 'dateCreation'
+        const sortOrder = req.query.sortOrder === 'asc' ? 1 : -1; // Sort order, default is descending
+
         const options = {
             page: page,
             limit: limit
         };
 
         const regexTitre = new RegExp(titre, 'i');
-        const regexMatiere = new RegExp(matiere, 'i');
+         const regexMatiere = new RegExp(matiere, 'i');
         const matchStage = {
             $match: {},
         };
@@ -25,12 +31,11 @@ async function getAssignments(req, res) {
                 $or: [
                     { titre: { $regex: regexTitre } },
                     { description: { $regex: regexTitre } },
-                    { matiere: { $regex: regexTitre } }
                 ],
             };
         }
         
-        if (matiere && regexMatiere !== '') {
+        if (matiere && matiere !== '') {
             if (!matchStage.$match) {
                 matchStage.$match = {};
             }
@@ -51,39 +56,11 @@ async function getAssignments(req, res) {
         }
         
         const sortStage = {
-            $sort: { dateCreation: -1 } 
+            $sort: { [sortField]: sortOrder } 
         };
 
-        const aggregation = [
-            matchStage,
-            sortStage,
-            {
-                $lookup: {
-                    from: 'matieres', // Nom de la collection des matières
-                    localField: 'matiere',
-                    foreignField: 'nom',
-                    as: 'matiereDetails'
-                }
-            },
-            {
-                $unwind: {
-                    path: '$matiereDetails',
-                    preserveNullAndEmptyArrays: true
-                }
-            },
-            {
-                $addFields: {
-                    'matierePhoto': '$matiereDetails.photo'
-                }
-            },
-            {
-                $project: {
-                    'matiereDetails': 0 
-                }
-            }
-        ];
-
-        const liste = await Assignment.aggregatePaginate(Assignment.aggregate(aggregation), options);
+        const aggregation = Assignment.aggregate([matchStage, sortStage]);
+        const liste = await Assignment.aggregatePaginate(aggregation, options);
         console.log(liste);
         res.json(liste);
     } catch (error) {
@@ -223,19 +200,27 @@ async function getAssignmentCountBetweenDates(req, res) {
     try {
         const startDate = moment.utc(req.query.date1, 'YYYY-MM-DD').startOf('day').toDate();
         const endDate = moment.utc(req.query.date2, 'YYYY-MM-DD').endOf('day').toDate();
-
+        const matiere = req.query.matiere;
+        
+        console.log('matiere:', matiere);
         console.log("startdate: ", startDate);
         console.log("endDate: ", endDate);
 
+        const matchCriteria = {
+            dateCreation: {
+                $gte: startDate,
+                $lte: endDate,
+                $exists: true 
+            }
+        };
+
+        if (matiere) {
+            matchCriteria.matiere = matiere;
+        }
+
         const assignmentCounts = await Assignment.aggregate([
             {
-                $match: {
-                    dateCreation: {
-                        $gte: startDate,
-                        $lte: endDate,
-                        $exists: true // Vérifier l'existence du champ dateCreation
-                    }
-                }
+                $match: matchCriteria
             },
             {
                 $group: {
@@ -256,8 +241,6 @@ async function getAssignmentCountBetweenDates(req, res) {
         res.status(500).json({ error: "Internal server error" });
     }
 }
-
-  
 
 // Mettre à jour la note et la remarque pour un rendu (PUT)
 async function updateRendu(req, res) {
@@ -329,4 +312,94 @@ async function getAssignmentsByGroupId(req, res) {
     }
 }
 
-module.exports = { getAssignmentCountBetweenDates,getPercentageAssignmentsBySubject,getAssignments, postAssignment, getAssignment, updateAssignment, addRendus, addGroupes, deleteAssignment,getAssignmentsByGroupId,updateRendu };
+async function updateAssignementsMatiere(req, res) {
+    try {
+        // Obtenez tous les assignements
+        const assignments = await Assignment.find();
+
+        var i = 0
+        for(let assignment of assignments) {
+
+            console.log("ato");
+            // Obtenez une matière aléatoire
+            const randomMatiere = await Matiere.aggregate([{ $sample: { size: 1 } }]);
+
+            console.log("matiere"+randomMatiere[0].nom);
+
+                // Mettez à jour l'assignement avec le nom de matière aléatoire
+                assignment.matiere = randomMatiere[0].nom;
+                console.log(i);
+                i+=1
+                await assignment.save();
+        }
+
+        res.json({ message: 'Assignments updated successfully'+i });
+    } catch (error) {
+        console.error("Error updating assignments:", error);
+        res.status(500).send(error);
+    }
+}
+
+function getRandomDate(start, end) {
+    return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+}
+
+
+async function updateAssignementsDate(req, res) {
+    try {
+        // Obtenez tous les assignements
+        const assignments = await Assignment.find();
+
+        var i = 0;
+        for (let assignment of assignments) {
+            // Obtenez une date aléatoire pour dateCreation
+            const randomDateCreation = getRandomDate(new Date("2024-01-01"), new Date("2024-05-28"));
+            console.log("dateCreation: " + randomDateCreation);
+
+            // Obtenez une date aléatoire pour dateLimite après la date de création
+            const randomDateLimite = getRandomDate(randomDateCreation, new Date("2024-12-31"));
+            console.log("dateLimite: " + randomDateLimite);
+
+            // Mettez à jour l'assignement avec les dates aléatoires
+            assignment.dateCreation = randomDateCreation;
+            assignment.dateLimite = randomDateLimite;
+            console.log(i);
+            i += 1;
+            await assignment.save();
+        }
+
+        res.json({ message: 'Assignments updated successfully' + i });
+    } catch (error) {
+        console.error("Error updating assignments:", error);
+        res.status(500).send(error);
+    }
+}
+
+
+async function updateUsernamesWithEmails(req, res) {
+    try {
+        // Liste des emails à assigner
+        const emails = ["dofaway973@crodity.com", "xonomeg143@jzexport.com", "heyoy73276@acuxi.com"];
+        
+        // Obtenez tous les utilisateurs
+        const users = await User.find();
+        
+        // Mélanger les emails pour les assigner aléatoirement
+        const shuffledEmails = emails.sort(() => 0.5 - Math.random());
+        
+        for (let i = 0; i < users.length; i++) {
+            // Assigner un email aléatoire à chaque utilisateur
+            users[i].username = shuffledEmails[i % shuffledEmails.length];
+            await users[i].save();
+        }
+
+        res.json({ message: 'Usernames updated successfully' });
+    } catch (error) {
+        console.error("Error updating usernames:", error);
+        res.status(500).send(error);
+    }
+}
+
+
+
+module.exports = { updateUsernamesWithEmails,updateAssignementsDate,updateAssignementsMatiere,getAssignmentCountBetweenDates,getPercentageAssignmentsBySubject,getAssignments, postAssignment, getAssignment, updateAssignment, addRendus, addGroupes, deleteAssignment,getAssignmentsByGroupId,updateRendu };
