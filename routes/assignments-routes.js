@@ -24,9 +24,9 @@ async function getAssignments(req, res) {
          const regexMatiere = new RegExp(matiere, 'i');
         const matchStage = {
             $match: {},
-        };
+          };
           
-        if (titre && regexTitre !== '') {
+        if (titre && titre !== '') {
             matchStage.$match = {
                 $or: [
                     { titre: { $regex: regexTitre } },
@@ -59,28 +59,14 @@ async function getAssignments(req, res) {
             $sort: { [sortField]: sortOrder } 
         };
 
-        const aggregation = Assignment.aggregate([matchStage, sortStage]);
-        const liste = await Assignment.aggregatePaginate(aggregation, options);
-        console.log(liste);
-        res.json(liste);
-    } catch (error) {
-        console.log('Erreur lors de la récupération des groupes:', error);
-        res.status(500).send(error);
-    }
-}
+        console.log('trieee'+sortStage);
 
-// Récupérer un assignment par son id (GET)
-async function getAssignment(req, res) {
-    try {
-        const assignmentId = req.params.id;
-        const matchStage = {
-            $match: { _id: mongoose.Types.ObjectId(assignmentId) }
-        };
         const aggregation = [
             matchStage,
+            sortStage,
             {
                 $lookup: {
-                    from: 'matieres',
+                    from: 'matieres', // Nom de la collection des matières
                     localField: 'matiere',
                     foreignField: 'nom',
                     as: 'matiereDetails'
@@ -104,16 +90,27 @@ async function getAssignment(req, res) {
             }
         ];
 
-        const assignment = await Assignment.aggregate(aggregation);
-        if (!assignment || assignment.length === 0) {
+        const liste = await Assignment.aggregatePaginate(Assignment.aggregate(aggregation), options);
+        // console.log(liste);
+        res.json(liste);
+    } catch (error) {
+        console.log('Erreur lors de la récupération des groupes:', error);
+        res.status(500).send(error);
+    }
+}
+// Récupérer un assignment par son id (GET)
+async function getAssignment(req, res) {
+    try {
+        const assignmentId = req.params.id;
+        const assignment = await Assignment.findById(assignmentId);
+        if (!assignment) {
             return res.status(404).json({ message: "Assignment not found" });
         }
-        res.json(assignment[0]); 
+        res.json(assignment);
     } catch (error) {
         res.status(500).send(error);
     }
 }
-
 
 async function getPercentageAssignmentsBySubject(req, res) {
     try {
@@ -241,6 +238,8 @@ async function getAssignmentCountBetweenDates(req, res) {
         res.status(500).json({ error: "Internal server error" });
     }
 }
+
+  
 
 // Mettre à jour la note et la remarque pour un rendu (PUT)
 async function updateRendu(req, res) {
