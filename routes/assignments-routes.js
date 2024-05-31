@@ -197,19 +197,27 @@ async function getAssignmentCountBetweenDates(req, res) {
     try {
         const startDate = moment.utc(req.query.date1, 'YYYY-MM-DD').startOf('day').toDate();
         const endDate = moment.utc(req.query.date2, 'YYYY-MM-DD').endOf('day').toDate();
-
+        const matiere = req.query.matiere;
+        
+        console.log('matiere:', matiere);
         console.log("startdate: ", startDate);
         console.log("endDate: ", endDate);
 
+        const matchCriteria = {
+            dateCreation: {
+                $gte: startDate,
+                $lte: endDate,
+                $exists: true 
+            }
+        };
+
+        if (matiere) {
+            matchCriteria.matiere = matiere;
+        }
+
         const assignmentCounts = await Assignment.aggregate([
             {
-                $match: {
-                    dateCreation: {
-                        $gte: startDate,
-                        $lte: endDate,
-                        $exists: true // Vérifier l'existence du champ dateCreation
-                    }
-                }
+                $match: matchCriteria
             },
             {
                 $group: {
@@ -230,8 +238,6 @@ async function getAssignmentCountBetweenDates(req, res) {
         res.status(500).json({ error: "Internal server error" });
     }
 }
-
-  
 
 // Mettre à jour la note et la remarque pour un rendu (PUT)
 async function updateRendu(req, res) {
