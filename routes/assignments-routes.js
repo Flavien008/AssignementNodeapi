@@ -4,62 +4,34 @@ const moment = require('moment');
 const Matiere = require('../model/matiere');
 let User = require('../model/user');
 
-
 async function getAssignments(req, res) {
     try {
-        let titre = req.query.titre; 
-        let matiere = req.query.matiere; 
-        let groupe = req.query.groupe; 
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 10;
-        const sortField = req.query.sortField || 'dateCreation'; // Field to sort by, default is 'dateCreation'
-        const sortOrder = req.query.sortOrder === 'asc' ? 1 : -1; // Sort order, default is descending
-
+        const { titre, matiere, groupe, page = 1, limit = 10, sortField = 'dateCreation', sortOrder = 'desc' } = req.query;
         const options = {
-            page: page,
-            limit: limit
+            page: parseInt(page),
+            limit: parseInt(limit)
         };
 
-        const regexTitre = new RegExp(titre, 'i');
-         const regexMatiere = new RegExp(matiere, 'i');
-        const matchStage = {
-            $match: {},
-          };
-          
-        if (titre && titre !== '') {
-            matchStage.$match = {
-                $or: [
-                    { titre: { $regex: regexTitre } },
-                    { description: { $regex: regexTitre } },
-                ],
-            };
-        }
-        
-        if (matiere && matiere !== '') {
-            if (!matchStage.$match) {
-                matchStage.$match = {};
-            }
-            if (!matchStage.$match.$and) {
-                matchStage.$match.$and = [];
-            }
-            matchStage.$match.$and.push({ matiere: { $regex: regexMatiere } });
-        }
-        
-        if (groupe && groupe !== '') {
-            if (!matchStage.$match) {
-                matchStage.$match = {};
-            }
-            if (!matchStage.$match.$and) {
-                matchStage.$match.$and = [];
-            }
-            matchStage.$match.$and.push({ "groupe.idGroupe": groupe });
-        }
-        
-        const sortStage = {
-            $sort: { [sortField]: sortOrder } 
-        };
+        const matchStage = { $match: {} };
 
-        console.log('trieee'+sortStage);
+        if (titre) {
+            const regexTitre = new RegExp(titre, 'i');
+            matchStage.$match.$or = [
+                { titre: { $regex: regexTitre } },
+                { description: { $regex: regexTitre } },
+            ];
+        }
+
+        if (matiere) {
+            const regexMatiere = new RegExp(matiere, 'i');
+            matchStage.$match.matiere = { $regex: regexMatiere };
+        }
+
+        if (groupe) {
+            matchStage.$match["groupe.idGroupe"] = groupe;
+        }
+
+        const sortStage = { $sort: { [sortField]: sortOrder === 'asc' ? 1 : -1 } };
 
         const aggregation = [
             matchStage,
@@ -85,19 +57,19 @@ async function getAssignments(req, res) {
             },
             {
                 $project: {
-                    'matiereDetails': 0 
+                    'matiereDetails': 0
                 }
             }
         ];
 
         const liste = await Assignment.aggregatePaginate(Assignment.aggregate(aggregation), options);
-        // console.log(liste);
         res.json(liste);
     } catch (error) {
-        console.log('Erreur lors de la récupération des groupes:', error);
+        console.error('Erreur lors de la récupération des groupes:', error);
         res.status(500).send(error);
     }
 }
+
 // Récupérer un assignment par son id (GET)
 async function getAssignment(req, res) {
     try {
