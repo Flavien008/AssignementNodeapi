@@ -102,15 +102,47 @@ async function getAssignments(req, res) {
 async function getAssignment(req, res) {
     try {
         const assignmentId = req.params.id;
-        const assignment = await Assignment.findById(assignmentId);
-        if (!assignment) {
+        const matchStage = {
+            $match: { _id: mongoose.Types.ObjectId(assignmentId) }
+        };
+        const aggregation = [
+            matchStage,
+            {
+                $lookup: {
+                    from: 'matieres',
+                    localField: 'matiere',
+                    foreignField: 'nom',
+                    as: 'matiereDetails'
+                }
+            },
+            {
+                $unwind: {
+                    path: '$matiereDetails',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $addFields: {
+                    'matierePhoto': '$matiereDetails.photo'
+                }
+            },
+            {
+                $project: {
+                    'matiereDetails': 0 
+                }
+            }
+        ];
+
+        const assignment = await Assignment.aggregate(aggregation);
+        if (!assignment || assignment.length === 0) {
             return res.status(404).json({ message: "Assignment not found" });
         }
-        res.json(assignment);
+        res.json(assignment[0]); 
     } catch (error) {
         res.status(500).send(error);
     }
 }
+
 
 async function getPercentageAssignmentsBySubject(req, res) {
     try {
