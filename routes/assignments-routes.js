@@ -26,7 +26,7 @@ async function getAssignments(req, res) {
             const regexMatiere = new RegExp(matiere, 'i');
             matchStage.$match.matiere = { $regex: regexMatiere };
         }
-
+        
         if (groupe) {
             matchStage.$match["groupe.idGroupe"] = groupe;
         }
