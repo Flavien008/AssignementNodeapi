@@ -21,7 +21,7 @@ async function getAssignments(req, res) {
         };
 
         const regexTitre = new RegExp(titre, 'i');
-        const regexMatiere = new RegExp(matiere, 'i');
+         const regexMatiere = new RegExp(matiere, 'i');
         const matchStage = {
             $match: {},
           };
@@ -31,7 +31,6 @@ async function getAssignments(req, res) {
                 $or: [
                     { titre: { $regex: regexTitre } },
                     { description: { $regex: regexTitre } },
-                    { matiere: { $regex: regexTitre } }
                 ],
             };
         }
