@@ -12,7 +12,7 @@ Ce backend API est conçu pour servir de support à l'application de gestion des
 ## Installation
 
 1. Installez les dépendances en exécutant `npm install`.
-2. Démarrez le serveur en exécutant `npm start`.
+2. Démarrez le serveur en exécutant `nodemon server.js`.
 
 ## Structure du Projet
 server.js: Point d'entrée de l'application backend.
@@ -89,4 +89,4 @@ https://assignementnodeapi.onrender.com/api
 - MongoDB version : v4.4.9
 
 ## Auteurs
-Ce projet a été développé par N° 21, RAKOTOARISON Tojo Fandresena Flavien et N°22, RAKOTOARIVONY Tendry Hery ny Aina.
+Ce projet a été développé par N° 19, RAKOTOARISON Tojo Fandresena Flavien et N°20, RAKOTOARIVONY Tendry Hery ny Aina.
