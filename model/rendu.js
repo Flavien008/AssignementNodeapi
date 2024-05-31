@@ -11,7 +11,10 @@ let RenduSchema = Schema({
     file: String,
     description: String,
     note: String,
-    remarque: String
+    remarque: String,
+    nomMatiere: String,
+    titreAssignment: String,
+    matierePhoto: String
 });
 
 RenduSchema.plugin(mongoosePaginate);
